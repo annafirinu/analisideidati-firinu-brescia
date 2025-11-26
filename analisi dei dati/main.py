@@ -1,7 +1,9 @@
-from genera_file import genera_file_txt
+from genera_file import *
 from statistiche_base import stampa_min, stampa_max, stampa_media, stampa_dev_std
 from analisi_posizionale import stampa_argmin, stampa_argmax, stampa_percentile, stampa_searchsorted
-from pulizia_dati import pulisci_dati
+from pulizia_dati import *
+from creazione_file import genera_csv
+from funzioni_analisi import *
 
 
 # Carica file TXT come lista di stringhe
@@ -16,14 +18,18 @@ def carica_file(file_path):
 def main():
     file_path = "dati.txt"
 
-    # Genera file con numeri casuali
+    # Genera file txt con numeri casuali
     genera_file_txt(file_path, n=50)
+    
+    #Genera csv e crea matrice
+    matrix = genera_csv()
 
     # Carica come lista grezza
     arr_grezzo = carica_file(file_path)
 
     # Pulisci i dati e crea array numpy
     arr = pulisci_dati(arr_grezzo)
+    
 
     print("Array numerico pulito creato correttamente.")
 
@@ -39,8 +45,11 @@ def main():
         print("8. Searchsorted")
         print("9. Esegui tutte le statistiche di base")
         print("10. Esegui tutte le analisi posizionali")
-        print("11. Esegui tutto")
-        print("12. Mostra array numerico pulito")
+        print("11. Esegui tutte le analisi aggregazioni 2D")
+        print("12. Esegui tutte le analisi matriciali 2D")
+        print("13. Esegui tutte le analisi 1D")
+        print("14. Mostra array iniziale")
+        print("14. Mostra matrice iniziale")
         print("0. Esci")
 
         scelta = input("Inserisci scelta: ")
@@ -75,7 +84,14 @@ def main():
                 stampa_percentile(arr, p)
             for x in [30, 50, 70]:
                 stampa_searchsorted(arr, x)
+                
         elif scelta == "11":
+            analisi_aggregazioni_2D(matrix)
+            
+        elif scelta == "12":
+            analisi_matriciale_2D(matrix)
+            
+        elif scelta == "13":
             stampa_min(arr)
             stampa_max(arr)
             stampa_media(arr)
@@ -86,9 +102,15 @@ def main():
                 stampa_percentile(arr, p)
             for x in [30, 50, 70]:
                 stampa_searchsorted(arr, x)
-        elif scelta == "12":
-            print("\nArray NumPy pulito:")
+                
+        elif scelta == "14":
+            print("\nArray iniziale:")
             print(arr)
+            
+        elif scelta == "15":
+            print("\nMatrice iniziale:")
+            print(matrix)
+            
         elif scelta == "0":
             print("Arrivederci!")
             break
