@@ -49,7 +49,7 @@ def main():
         print("12. Esegui tutte le analisi matriciali 2D")
         print("13. Esegui tutte le analisi 1D")
         print("14. Mostra array iniziale")
-        print("14. Mostra matrice iniziale")
+        print("15. Mostra matrice iniziale")
         print("0. Esci")
 
         scelta = input("Inserisci scelta: ")

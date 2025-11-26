@@ -1,13 +1,23 @@
 import numpy as np
 
 def pulisci_dati(arr):
-    numeri = []
+    # Trasforma in array NumPy di stringhe
+    arr = np.array(arr, dtype=str)
+    
+    # Rimuove spazi bianchi
+    arr = np.char.strip(arr)
+    
+    
+    def is_float(s):
+        s = s.replace(".", "", 1)  # rimuove primo punto decimale
+        s = s.replace("-", "", 1)  # rimuove segno meno
+        return s.isdigit()
+    
+    # Applica la funzione a tutti gli elementi
+    mask = np.vectorize(is_float)(arr)
+    
+    # Seleziona solo numeri validi e converte in float
+    numeri = arr[mask].astype(float)
+    
+    return numeri
 
-    for x in arr:
-        x = x.strip()
-
-        if x.isdigit():      # accetta solo numeri interi POSITIVI
-            numeri.append(int(x))
-
-    # trasformo la lista pulita in un array NumPy
-    return np.array(numeri)
