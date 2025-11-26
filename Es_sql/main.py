@@ -1,5 +1,5 @@
 from statistiche_base import stampa_min, stampa_max, stampa_media, stampa_dev_std
-from analisi_posizionale import stampa_argmin, stampa_argmax, stampa_percentile, stampa_searchsorted
+from analisi_posizionale import stampa_percentile
 from pulizia_dati import *
 import numpy as np
 import sqlite3
@@ -46,3 +46,66 @@ conn.commit()
 conn.close()
 
 print("Dati caricati da CSV, Creato array per colonna con NumPy, Passati a SQLite") 
+
+
+ #Statistiche e creazione database statistiche
+# Lista dei nomi delle colonne corrispondenti agli array
+col_names = ["MedInc", "HouseAge", "AveRooms", "AveBedrms", 
+             "Population", "AveOccup", "Latitude", "Longitude", "MedHouseVal"]
+
+# Array già creati in precedenza dal CSV
+arrays = [MedInc, HouseAge, AveRooms, AveBedrms, 
+          Population, AveOccup, Latitude, Longitude, MedHouseVal]
+
+
+# Creiamo una lista vuota per contenere tutte le statistiche
+statistiche = []
+
+# Ciclo su ciascuna colonna (nome + array corrispondente)
+for nome, arr in zip(col_names, arrays):
+    # Calcolo valore minimo della colonna
+    min_val = stampa_min(arr)
+    # Calcolo valore massimo della colonna
+    max_val = stampa_max(arr)
+    # Calcolo della media aritmetica
+    mean_val = stampa_media(arr)
+    # Calcolo della deviazione standard
+    std_val = stampa_dev_std(arr)
+    # Calcolo della mediana (percentile 50)
+    median = stampa_percentile(arr, 50)
+
+    # Creiamo una tupla con tutte le informazioni per questa colonna
+    statistiche.append((nome, min_val, max_val, mean_val, std_val, median))
+
+# Creiamo (o apriamo) il database SQLite "housing_stats.db"
+conn = sqlite3.connect("housing_stats.db")
+cursor = conn.cursor()  # Creiamo un cursore per eseguire comandi SQL
+
+
+# Se esiste una tabella precedente con lo stesso nome, la eliminiamo
+cursor.execute("DROP TABLE IF EXISTS HousingStats")
+
+# Creiamo la nuova tabella con 6 colonne:
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS HousingStats (
+    ColumnName TEXT,
+    Min REAL,
+    Max REAL,
+    Mean REAL,
+    Std REAL,
+    Median REAL
+);
+""")
+
+
+# Inseriamo tutte le tuple calcolate in una sola volta usando executemany()
+cursor.executemany("""
+    INSERT INTO HousingStats VALUES (?, ?, ?, ?, ?, ?)
+""", statistiche)
+
+# Salviamo le modifiche nel database
+conn.commit()
+# Chiudiamo la connessione
+conn.close()
+
+print("Statistiche calcolate dagli array e salvate su 'housing_stats.db'")
