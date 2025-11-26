@@ -22,7 +22,8 @@ def main():
     genera_file_txt(file_path, n=50)
     
     #Genera csv e crea matrice
-    matrix = genera_csv()
+    raw_matrix = genera_csv()  # matrice grezza
+    matrix = pulisci_dati_2D(raw_matrix) #matrice pulita 
 
     # Carica come lista grezza
     arr_grezzo = carica_file(file_path)
